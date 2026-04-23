@@ -1,0 +1,30 @@
+@use "./scss/variables" as *;
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    background: $color-bg-primary;
+    color: $color-text-primary;
+    animation: appFadeIn $transition-base;
+
+    &__workspace {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+        background:
+            radial-gradient(circle at 20% 20%, rgba($color-surface-3, 0.18), transparent 45%),
+            $color-bg-primary;
+        transition: background $transition-base;
+    }
+}
+
+@keyframes appFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
