@@ -1,4 +1,4 @@
-import type { OpenedImage } from "../../types/image";
+import type { ImageColorDepth, OpenedImage } from "../../types/image";
 import { yieldToBrowserFrame } from "../scheduler";
 
 const GB7_SIGNATURE = [0x47, 0x42, 0x37, 0x1d];
@@ -59,6 +59,8 @@ export async function decodeGb7File(file: File): Promise<OpenedImage> {
     );
   }
 
+  const colorDepth: ImageColorDepth = hasMask ? 8 : 7;
+
   const rgba = new Uint8ClampedArray(pixelCount * 4);
   for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
     if (pixelIndex > 0 && pixelIndex % YIELD_EVERY_PIXELS === 0) {
@@ -83,7 +85,7 @@ export async function decodeGb7File(file: File): Promise<OpenedImage> {
     fileName: file.name,
     width,
     height,
-    colorDepth: 7,
+    colorDepth,
     bitmap,
   };
 }

@@ -24,7 +24,7 @@ export default function StatusBar({
       </div>
 
       <div className={styles.statusBar__item}>
-        Глубина: {colorDepth}
+        Глубина: {colorDepth} бит
       </div>
     </div>
   );
