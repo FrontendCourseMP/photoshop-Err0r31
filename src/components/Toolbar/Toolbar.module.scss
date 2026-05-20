@@ -1,0 +1,49 @@
+@use "../../scss/variables" as *;
+
+.toolbar {
+    width: 40px;
+    min-width: 40px;
+    background: $color-bg-secondary;
+    border-right: 1px solid $color-border;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $space-2 0;
+    gap: $space-1;
+
+    &__button {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: $radius-sm;
+        color: $color-text-secondary;
+        transition:
+            background $transition-fast,
+            color $transition-fast,
+            border-color $transition-fast;
+
+        &:hover:not(:disabled) {
+            background: $color-bg-tertiary;
+            color: $color-text-primary;
+        }
+
+        &:disabled {
+            color: $color-text-muted;
+            cursor: not-allowed;
+        }
+    }
+
+    &__buttonActive {
+        background: $color-surface-2;
+        border-color: $color-accent;
+        color: $color-accent;
+
+        &:hover:not(:disabled) {
+            background: $color-surface-3;
+            color: $color-accent-hover;
+        }
+    }
+}

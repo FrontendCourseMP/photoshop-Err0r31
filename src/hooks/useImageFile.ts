@@ -30,7 +30,6 @@ export function useImageFile(): UseImageFileResult {
     setIsLoading(true);
 
     try {
-      // Let the dropdown close and UI paint before decode starts.
       await yieldToBrowserFrame();
 
       const decodedImage = await decodeRasterFile(file);

@@ -49,7 +49,6 @@ export async function exportOpenedImage(image: OpenedImage, format: ExportFormat
   }
 
   if (format === "jpg") {
-    // JPEG has no alpha channel, so fill with white background first.
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, image.width, image.height);
   }

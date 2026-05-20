@@ -18,25 +18,34 @@ export default function MenuBar({
   isBusy,
   canExport,
   hasImage,
-}: MenuBarProps) {
-  const [open, setOpen] = useState(false);
-  const menuItemRef = useRef<HTMLDivElement>(null);
+  showToolbar,
+  showChannelsPanel,
+  onToggleToolbar,
+  onToggleChannelsPanel,
+}: MenuBarProps & {
+  showToolbar: boolean;
+  showChannelsPanel: boolean;
+  onToggleToolbar: () => void;
+  onToggleChannelsPanel: () => void;
+}) {
+  const [openMenu, setOpenMenu] = useState<"file" | "tools" | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setOpen(false);
+        setOpenMenu(null);
       }
     }
 
     function handlePointerDown(event: MouseEvent) {
-      if (!menuItemRef.current) {
+      if (!containerRef.current) {
         return;
       }
 
-      if (!menuItemRef.current.contains(event.target as Node)) {
-        setOpen(false);
+      if (!containerRef.current.contains(event.target as Node)) {
+        setOpenMenu(null);
       }
     }
 
@@ -64,7 +73,7 @@ export default function MenuBar({
 
     try {
       await onOpenFile(file);
-      setOpen(false);
+      setOpenMenu(null);
     } catch (error) {
       const fallback = "Ошибка при открытии изображения.";
       const message = error instanceof Error ? error.message : fallback;
@@ -75,7 +84,7 @@ export default function MenuBar({
   async function handleExportClick(format: ExportFormat) {
     try {
       await onExportFile(format);
-      setOpen(false);
+      setOpenMenu(null);
     } catch (error) {
       const fallback = "Ошибка при сохранении изображения.";
       const message = error instanceof Error ? error.message : fallback;
@@ -85,11 +94,11 @@ export default function MenuBar({
 
   function handleCloseImageClick() {
     onCloseImage();
-    setOpen(false);
+    setOpenMenu(null);
   }
 
   return (
-    <div className={styles.menuBar}>
+    <div className={styles.menuBar} ref={containerRef}>
       <input
         ref={fileInputRef}
         className={styles.menuBar__fileInput}
@@ -98,15 +107,15 @@ export default function MenuBar({
         onChange={handleFileInputChange}
       />
 
-      <div className={styles.menuBar__item} ref={menuItemRef}>
+      <div className={styles.menuBar__item}>
         <button
           className={styles.menuBar__button}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpenMenu((v) => (v === "file" ? null : "file"))}
         >
           Файл
         </button>
 
-        {open && (
+        {openMenu === "file" && (
           <ul className={styles.dropdown}>
             <li className={styles.dropdown__item}>
               <button className={styles.dropdown__button} onClick={handleOpenClick}>
@@ -149,6 +158,42 @@ export default function MenuBar({
                 onClick={handleCloseImageClick}
               >
                 Закрыть
+              </button>
+            </li>
+          </ul>
+        )}
+      </div>
+
+      <div className={styles.menuBar__item}>
+        <button
+          className={styles.menuBar__button}
+          onClick={() => setOpenMenu((v) => (v === "tools" ? null : "tools"))}
+        >
+          Инструменты
+        </button>
+
+        {openMenu === "tools" && (
+          <ul className={styles.dropdown}>
+            <li className={styles.dropdown__item}>
+              <button
+                className={styles.dropdown__button}
+                onClick={() => {
+                  onToggleToolbar();
+                  setOpenMenu(null);
+                }}
+              >
+                {showToolbar ? "✓ Инструменты" : "Инструменты"}
+              </button>
+            </li>
+            <li className={styles.dropdown__item}>
+              <button
+                className={styles.dropdown__button}
+                onClick={() => {
+                  onToggleChannelsPanel();
+                  setOpenMenu(null);
+                }}
+              >
+                {showChannelsPanel ? "✓ Каналы" : "Каналы"}
               </button>
             </li>
           </ul>

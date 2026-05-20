@@ -18,6 +18,16 @@
             $color-bg-primary;
         transition: background $transition-base;
     }
+
+    &__sidebar {
+        width: 220px;
+        min-width: 220px;
+        background: $color-bg-secondary;
+        border-left: 1px solid $color-border;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
 }
 
 @keyframes appFadeIn {

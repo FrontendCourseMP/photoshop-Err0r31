@@ -1,0 +1,58 @@
+@use "../../scss/variables" as *;
+
+.eyedropperInfo {
+    margin-top: auto;
+    border-top: 1px solid $color-border;
+
+    &__header {
+        padding: $space-2 $space-3;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: $color-text-secondary;
+        border-bottom: 1px solid $color-border;
+        user-select: none;
+    }
+
+    &__body {
+        padding: $space-2 $space-3;
+        display: flex;
+        flex-direction: column;
+        gap: $space-2;
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__sectionTitle {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: $color-text-muted;
+        margin-bottom: 1px;
+    }
+
+    &__row {
+        display: flex;
+        align-items: baseline;
+        gap: $space-1;
+        font-size: 12px;
+    }
+
+    &__label {
+        color: $color-text-secondary;
+        font-family: "Consolas", "Menlo", monospace;
+        min-width: 20px;
+    }
+
+    &__value {
+        color: $color-text-primary;
+        font-family: "Consolas", "Menlo", monospace;
+        min-width: 32px;
+    }
+}

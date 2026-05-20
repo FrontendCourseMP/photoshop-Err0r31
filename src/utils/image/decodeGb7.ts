@@ -1,10 +1,15 @@
 import type { ImageColorDepth, OpenedImage } from "../../types/image";
-import { yieldToBrowserFrame } from "../scheduler";
+import { colorDepthToChannelMode } from "./channelUtils";
+import { imageDataRegistry } from "./imageRegistry";
 
 const GB7_SIGNATURE = [0x47, 0x42, 0x37, 0x1d];
 const GB7_HEADER_SIZE = 12;
 const GB7_VERSION = 0x01;
-const YIELD_EVERY_PIXELS = 250_000;
+
+const GRAY8_TABLE = new Uint8Array(128);
+for (let i = 0; i < 128; i++) {
+  GRAY8_TABLE[i] = Math.round((i / 127) * 255);
+}
 
 function readUint16BE(view: DataView, offset: number): number {
   return view.getUint16(offset, false);
@@ -62,14 +67,11 @@ export async function decodeGb7File(file: File): Promise<OpenedImage> {
   const colorDepth: ImageColorDepth = hasMask ? 8 : 7;
 
   const rgba = new Uint8ClampedArray(pixelCount * 4);
+  const startOffset = GB7_HEADER_SIZE;
+  
   for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
-    if (pixelIndex > 0 && pixelIndex % YIELD_EVERY_PIXELS === 0) {
-      await yieldToBrowserFrame();
-    }
-
-    const packedValue = bytes[GB7_HEADER_SIZE + pixelIndex];
-    const gray7 = packedValue & 0x7f;
-    const gray8 = Math.round((gray7 / 127) * 255);
+    const packedValue = bytes[startOffset + pixelIndex];
+    const gray8 = GRAY8_TABLE[packedValue & 0x7f];
     const alpha = hasMask ? ((packedValue & 0x80) !== 0 ? 255 : 0) : 255;
 
     const rgbaOffset = pixelIndex * 4;
@@ -79,7 +81,10 @@ export async function decodeGb7File(file: File): Promise<OpenedImage> {
     rgba[rgbaOffset + 3] = alpha;
   }
 
-  const bitmap = await createImageBitmap(new ImageData(rgba, width, height));
+  const imageData = new ImageData(rgba, width, height);
+  const bitmap = await createImageBitmap(imageData);
+
+  imageDataRegistry.set(bitmap, imageData);
 
   return {
     fileName: file.name,
@@ -87,5 +92,6 @@ export async function decodeGb7File(file: File): Promise<OpenedImage> {
     height,
     colorDepth,
     bitmap,
+    channelMode: colorDepthToChannelMode(colorDepth),
   };
 }

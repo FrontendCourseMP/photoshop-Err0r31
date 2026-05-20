@@ -13,9 +13,6 @@
     }
 
     &__button {
-        background: transparent;
-        border: none;
-        color: $color-text-primary;
         padding: $space-2 $space-3;
         border-radius: $radius-sm;
         font-size: 13px;
@@ -59,14 +56,10 @@
         width: calc(100% - #{$space-2});
         margin: 0 $space-1;
         padding: $space-2 $space-3;
-        background: transparent;
-        border: none;
         text-align: left;
-        color: $color-text-primary;
         font-size: 13px;
         border-radius: $radius-sm;
         transition: background $transition-base;
-        cursor: pointer;
 
         &:hover {
             background: $color-bg-secondary;
