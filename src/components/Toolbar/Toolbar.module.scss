@@ -37,13 +37,20 @@
     }
 
     &__buttonActive {
-        background: $color-surface-2;
-        border-color: $color-accent;
+        background: rgba($color-accent, 0.2);
         color: $color-accent;
+        border-color: rgba($color-accent, 0.4);
 
-        &:hover:not(:disabled) {
-            background: $color-surface-3;
-            color: $color-accent-hover;
+        &:hover {
+            background: rgba($color-accent, 0.25);
         }
+    }
+
+    &__divider {
+        height: 2px;
+        width: 60%;
+        margin: $space-1 auto;
+        background: $color-border;
+        border-radius: 1px;
     }
 }

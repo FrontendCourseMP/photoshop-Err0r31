@@ -42,12 +42,16 @@ export default function CanvasArea({
       return;
     }
 
+    const imageData = bitmap ? imageDataRegistry.get(bitmap) : null;
     const allEnabled = areAllChannelsEnabled(enabledChannels, channelMode);
     if (allEnabled) {
-      context.clearRect(0, 0, width, height);
-      context.drawImage(bitmap, 0, 0);
+      if (bitmap) {
+        context.clearRect(0, 0, width, height);
+        context.drawImage(bitmap, 0, 0);
+      } else if (imageData) {
+        context.putImageData(imageData, 0, 0);
+      }
     } else {
-      const imageData = imageDataRegistry.get(bitmap);
       if (imageData) {
         const filtered = renderWithChannels(
           imageData,

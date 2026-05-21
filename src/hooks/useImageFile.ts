@@ -2,12 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import type { OpenedImage } from "../types/image";
 import { yieldToBrowserFrame } from "../utils/scheduler";
 import { decodeRasterFile, isSupportedRasterFile } from "../utils/imageFile";
+import { imageDataRegistry } from "../utils/image/imageRegistry";
 
 type UseImageFileResult = {
   openedImage: OpenedImage | null;
   isLoading: boolean;
   openFile: (file: File) => Promise<void>;
   closeImage: () => void;
+  updateImage: (newData: ImageData) => Promise<void>;
 };
 
 export function useImageFile(): UseImageFileResult {
@@ -49,10 +51,32 @@ export function useImageFile(): UseImageFileResult {
     });
   }, []);
 
+  const updateImage = useCallback(async (newData: ImageData) => {
+    setIsLoading(true);
+    try {
+      await yieldToBrowserFrame();
+      const newBitmap = await createImageBitmap(newData);
+      imageDataRegistry.set(newBitmap, newData);
+      
+      setOpenedImage((prev) => {
+        if (!prev) return null;
+        prev.bitmap.close();
+        return {
+          ...prev,
+          imageData: newData,
+          bitmap: newBitmap,
+        };
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     openedImage,
     isLoading,
     openFile,
     closeImage,
+    updateImage,
   };
 }

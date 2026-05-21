@@ -1,6 +1,7 @@
 import type { ImageColorDepth, OpenedImage } from "../../types/image";
 import { colorDepthToChannelMode } from "./channelUtils";
 import { imageDataRegistry } from "./imageRegistry";
+import { yieldToBrowserFrame } from "../scheduler";
 
 const GB7_SIGNATURE = [0x47, 0x42, 0x37, 0x1d];
 const GB7_HEADER_SIZE = 12;
@@ -70,6 +71,9 @@ export async function decodeGb7File(file: File): Promise<OpenedImage> {
   const startOffset = GB7_HEADER_SIZE;
   
   for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    if (pixelIndex > 0 && pixelIndex % 250_000 === 0) {
+      await yieldToBrowserFrame();
+    }
     const packedValue = bytes[startOffset + pixelIndex];
     const gray8 = GRAY8_TABLE[packedValue & 0x7f];
     const alpha = hasMask ? ((packedValue & 0x80) !== 0 ? 255 : 0) : 255;

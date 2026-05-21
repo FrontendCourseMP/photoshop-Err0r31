@@ -1,0 +1,173 @@
+@use "../../scss/variables" as *;
+
+.levelsDialog {
+  background: $color-bg-secondary;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 0;
+  width: 480px;
+  max-width: 90vw;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-2 $space-3;
+    border-bottom: 1px solid $color-border;
+    background: $color-surface-2;
+    border-top-left-radius: $radius-md;
+    border-top-right-radius: $radius-md;
+
+    h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: $color-text-secondary;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__body {
+    padding: $space-3;
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  &__previewContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #000;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    overflow: hidden;
+  }
+
+  &__previewCanvas {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    display: block;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__rowRight {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__select {
+    flex: 1;
+    background: $color-bg-tertiary;
+    color: $color-text-primary;
+    border: 1px solid $color-border;
+    padding: $space-1 $space-2;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    outline: none;
+    transition: background $transition-base, border-color $transition-base;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-surface-2;
+    }
+
+    &:focus {
+      border-color: $color-accent;
+    }
+  }
+
+  &__histogramContainer {
+    width: 100%;
+  }
+
+  &__sliderContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $color-text-secondary;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: 12px;
+    color: $color-text-primary;
+    cursor: pointer;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      accent-color: $color-accent;
+      transition: all $transition-base;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-3;
+    border-top: 1px solid $color-border;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-2;
+  }
+
+  &__button {
+    background: $color-bg-tertiary;
+    color: $color-text-primary;
+    border: 1px solid $color-border;
+    padding: $space-1 $space-3;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+
+    &:hover {
+      background: $color-surface-3;
+    }
+  }
+
+  &__buttonPrimary {
+    background: $color-accent;
+    color: #fff;
+    border-color: $color-accent;
+
+    &:hover {
+      background: $color-accent-hover;
+      border-color: $color-accent-hover;
+    }
+  }
+}

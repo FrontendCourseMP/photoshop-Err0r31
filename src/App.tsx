@@ -5,15 +5,17 @@ import CanvasArea from "./components/CanvasArea/CanvasArea";
 import ChannelsPanel from "./components/ChannelsPanel/ChannelsPanel";
 import EyedropperInfo from "./components/EyedropperInfo/EyedropperInfo";
 import StatusBar from "./components/StatusBar/StatusBar";
+import LevelsDialog from "./components/LevelsDialog/LevelsDialog";
 import { useImageExport } from "./hooks/useImageExport";
 import { useImageFile } from "./hooks/useImageFile";
 import { getChannelNames } from "./utils/image/channelUtils";
+import { imageDataRegistry } from "./utils/image/imageRegistry";
 import type { ActiveTool, PixelInfo, OpenedImage } from "./types/image";
 
 import styles from "./App.module.scss";
 
 export default function App() {
-  const { openedImage, isLoading, openFile, closeImage } = useImageFile();
+  const { openedImage, isLoading, openFile, closeImage, updateImage } = useImageFile();
   const { isExporting, exportFile } = useImageExport(openedImage);
 
   const [enabledChannels, setEnabledChannels] = useState<Set<string>>(
@@ -21,6 +23,8 @@ export default function App() {
   );
   const [activeTool, setActiveTool] = useState<ActiveTool>("none");
   const [pickedPixel, setPickedPixel] = useState<PixelInfo | null>(null);
+
+  const [isLevelsOpen, setIsLevelsOpen] = useState(false);
   const [prevImage, setPrevImage] = useState<OpenedImage | null>(null);
 
   const [showToolbar, setShowToolbar] = useState(true);
@@ -48,6 +52,10 @@ export default function App() {
     });
   }, []);
 
+  const handleApplyLevels = useCallback((newData: ImageData) => {
+    updateImage(newData);
+  }, [updateImage]);
+
   return (
     <div className={styles.app}>
       <MenuBar
@@ -59,7 +67,7 @@ export default function App() {
         hasImage={Boolean(openedImage)}
         showToolbar={showToolbar}
         showChannelsPanel={showChannelsPanel}
-        onToggleToolbar={() => setShowToolbar((v) => !v)}
+        onToggleToolbar={() => setShowToolbar(!showToolbar)}
         onToggleChannelsPanel={() => setShowChannelsPanel((v) => !v)}
       />
 
@@ -69,6 +77,7 @@ export default function App() {
             activeTool={activeTool}
             onToolChange={setActiveTool}
             disabled={!openedImage}
+            onOpenLevels={() => setIsLevelsOpen(true)}
           />
         )}
 
@@ -103,6 +112,16 @@ export default function App() {
         height={openedImage?.height ?? 0}
         colorDepth={openedImage?.colorDepth ?? 0}
       />
+
+      {isLevelsOpen && (
+        <LevelsDialog
+          isOpen={isLevelsOpen}
+          channelMode={openedImage?.channelMode ?? null}
+          originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
+          onClose={() => setIsLevelsOpen(false)}
+          onApply={handleApplyLevels}
+        />
+      )}
     </div>
   );
 }
