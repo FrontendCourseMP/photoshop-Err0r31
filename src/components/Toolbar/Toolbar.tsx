@@ -1,4 +1,4 @@
-import { MousePointer2, Pipette, SlidersHorizontal, Ruler } from "lucide-react";
+import { MousePointer2, Pipette, SlidersHorizontal, Ruler, Sparkles } from "lucide-react";
 import type { ActiveTool } from "../../types/image";
 import styles from "./Toolbar.module.scss";
 
@@ -8,6 +8,7 @@ type ToolbarProps = {
   disabled: boolean;
   onOpenLevels: () => void;
   onOpenResize: () => void;
+  onOpenFilter: () => void;
 };
 
 export default function Toolbar({
@@ -16,6 +17,7 @@ export default function Toolbar({
   disabled,
   onOpenLevels,
   onOpenResize,
+  onOpenFilter,
 }: ToolbarProps) {
   const isCursor = activeTool === "none";
   const isEyedropper = activeTool === "eyedropper";
@@ -62,6 +64,16 @@ export default function Toolbar({
         aria-label="Размер изображения"
       >
         <Ruler size={18} />
+      </button>
+
+      <button
+        className={styles.toolbar__button}
+        onClick={onOpenFilter}
+        disabled={disabled}
+        title="Фильтрация (Ядра свертки)"
+        aria-label="Фильтрация (Ядра свертки)"
+      >
+        <Sparkles size={18} />
       </button>
     </div>
   );

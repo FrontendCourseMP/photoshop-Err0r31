@@ -7,6 +7,7 @@ import EyedropperInfo from "./components/EyedropperInfo/EyedropperInfo";
 import StatusBar from "./components/StatusBar/StatusBar";
 import LevelsDialog from "./components/LevelsDialog/LevelsDialog";
 import ResizeDialog from "./components/ResizeDialog/ResizeDialog";
+import FilterDialog from "./components/FilterDialog/FilterDialog";
 import { useImageExport } from "./hooks/useImageExport";
 import { useImageFile } from "./hooks/useImageFile";
 import { getChannelNames } from "./utils/image/channelUtils";
@@ -27,6 +28,7 @@ export default function App() {
 
   const [isLevelsOpen, setIsLevelsOpen] = useState(false);
   const [isResizeOpen, setIsResizeOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [prevImage, setPrevImage] = useState<OpenedImage | null>(null);
 
   const [showToolbar, setShowToolbar] = useState(true);
@@ -84,6 +86,10 @@ export default function App() {
     updateImage(newData);
   }, [updateImage]);
 
+  const handleApplyFilter = useCallback((newData: ImageData) => {
+    updateImage(newData);
+  }, [updateImage]);
+
   return (
     <div className={styles.app}>
       <MenuBar
@@ -107,6 +113,7 @@ export default function App() {
             disabled={!openedImage}
             onOpenLevels={() => setIsLevelsOpen(true)}
             onOpenResize={() => setIsResizeOpen(true)}
+            onOpenFilter={() => setIsFilterOpen(true)}
           />
         )}
 
@@ -168,6 +175,16 @@ export default function App() {
           originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
           onClose={() => setIsResizeOpen(false)}
           onApply={handleApplyResize}
+        />
+      )}
+
+      {isFilterOpen && (
+        <FilterDialog
+          isOpen={isFilterOpen}
+          channelMode={openedImage?.channelMode ?? null}
+          originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
+          onClose={() => setIsFilterOpen(false)}
+          onApply={handleApplyFilter}
         />
       )}
     </div>
