@@ -1,4 +1,6 @@
 import type { ChannelMode, ImageColorDepth } from "../../types/image";
+import { imageDataRegistry } from "./imageRegistry";
+import { nearestNeighborScale } from "./interpolation";
 
 export function colorDepthToChannelMode(depth: ImageColorDepth): ChannelMode {
   switch (depth) {
@@ -173,9 +175,17 @@ export function generateChannelThumbnails(
   thumbCanvas.width = thumbW;
   thumbCanvas.height = thumbH;
   const thumbCtx = thumbCanvas.getContext("2d", { willReadFrequently: true })!;
-  thumbCtx.drawImage(bitmap, 0, 0, thumbW, thumbH);
 
-  const smallData = thumbCtx.getImageData(0, 0, thumbW, thumbH);
+  const originalImageData = imageDataRegistry.get(bitmap);
+  let smallData: ImageData;
+
+  if (originalImageData) {
+    smallData = nearestNeighborScale(originalImageData, thumbW, thumbH);
+  } else {
+    thumbCtx.drawImage(bitmap, 0, 0, thumbW, thumbH);
+    smallData = thumbCtx.getImageData(0, 0, thumbW, thumbH);
+  }
+
   const channels = getChannelNames(channelMode);
   const result = new Map<string, string>();
 

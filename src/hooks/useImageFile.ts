@@ -63,7 +63,8 @@ export function useImageFile(): UseImageFileResult {
         prev.bitmap.close();
         return {
           ...prev,
-          imageData: newData,
+          width: newData.width,
+          height: newData.height,
           bitmap: newBitmap,
         };
       });

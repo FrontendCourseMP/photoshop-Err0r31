@@ -1,4 +1,4 @@
-import { MousePointer2, Pipette, SlidersHorizontal } from "lucide-react";
+import { MousePointer2, Pipette, SlidersHorizontal, Ruler } from "lucide-react";
 import type { ActiveTool } from "../../types/image";
 import styles from "./Toolbar.module.scss";
 
@@ -7,6 +7,7 @@ type ToolbarProps = {
   onToolChange: (tool: ActiveTool) => void;
   disabled: boolean;
   onOpenLevels: () => void;
+  onOpenResize: () => void;
 };
 
 export default function Toolbar({
@@ -14,6 +15,7 @@ export default function Toolbar({
   onToolChange,
   disabled,
   onOpenLevels,
+  onOpenResize,
 }: ToolbarProps) {
   const isCursor = activeTool === "none";
   const isEyedropper = activeTool === "eyedropper";
@@ -50,6 +52,16 @@ export default function Toolbar({
         aria-label="Уровни (Levels)"
       >
         <SlidersHorizontal size={18} />
+      </button>
+
+      <button
+        className={styles.toolbar__button}
+        onClick={onOpenResize}
+        disabled={disabled}
+        title="Размер изображения"
+        aria-label="Размер изображения"
+      >
+        <Ruler size={18} />
       </button>
     </div>
   );

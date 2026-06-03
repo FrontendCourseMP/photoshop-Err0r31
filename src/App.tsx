@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MenuBar from "./components/MenuBar/MenuBar";
 import Toolbar from "./components/Toolbar/Toolbar";
 import CanvasArea from "./components/CanvasArea/CanvasArea";
@@ -6,6 +6,7 @@ import ChannelsPanel from "./components/ChannelsPanel/ChannelsPanel";
 import EyedropperInfo from "./components/EyedropperInfo/EyedropperInfo";
 import StatusBar from "./components/StatusBar/StatusBar";
 import LevelsDialog from "./components/LevelsDialog/LevelsDialog";
+import ResizeDialog from "./components/ResizeDialog/ResizeDialog";
 import { useImageExport } from "./hooks/useImageExport";
 import { useImageFile } from "./hooks/useImageFile";
 import { getChannelNames } from "./utils/image/channelUtils";
@@ -25,20 +26,43 @@ export default function App() {
   const [pickedPixel, setPickedPixel] = useState<PixelInfo | null>(null);
 
   const [isLevelsOpen, setIsLevelsOpen] = useState(false);
+  const [isResizeOpen, setIsResizeOpen] = useState(false);
   const [prevImage, setPrevImage] = useState<OpenedImage | null>(null);
 
   const [showToolbar, setShowToolbar] = useState(true);
   const [showChannelsPanel, setShowChannelsPanel] = useState(true);
 
+  const [visualScale, setVisualScale] = useState<number>(1);
+  const [layoutScale, setLayoutScale] = useState<number>(1);
+  const [visualAlgorithmId, setVisualAlgorithmId] = useState<string>("bilinear");
+  const [fitTrigger, setFitTrigger] = useState(0);
+
   if (openedImage !== prevImage) {
     setPrevImage(openedImage);
     if (openedImage) {
       setEnabledChannels(new Set(getChannelNames(openedImage.channelMode)));
+      setVisualScale(1);
+      setLayoutScale(1);
+      setFitTrigger((v) => v + 1);
     } else {
       setEnabledChannels(new Set());
     }
     setPickedPixel(null);
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisualScale(layoutScale);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [layoutScale]);
+
+  const handleScaleChange = useCallback((scale: number, immediate = false) => {
+    setLayoutScale(scale);
+    if (immediate) {
+      setVisualScale(scale);
+    }
+  }, []);
 
   const handleToggleChannel = useCallback((channel: string) => {
     setEnabledChannels((prev) => {
@@ -53,6 +77,10 @@ export default function App() {
   }, []);
 
   const handleApplyLevels = useCallback((newData: ImageData) => {
+    updateImage(newData);
+  }, [updateImage]);
+
+  const handleApplyResize = useCallback((newData: ImageData) => {
     updateImage(newData);
   }, [updateImage]);
 
@@ -78,6 +106,7 @@ export default function App() {
             onToolChange={setActiveTool}
             disabled={!openedImage}
             onOpenLevels={() => setIsLevelsOpen(true)}
+            onOpenResize={() => setIsResizeOpen(true)}
           />
         )}
 
@@ -89,6 +118,11 @@ export default function App() {
           enabledChannels={enabledChannels}
           activeTool={activeTool}
           onPixelPick={setPickedPixel}
+          visualScale={visualScale}
+          layoutScale={layoutScale}
+          visualAlgorithmId={visualAlgorithmId}
+          onScaleChange={handleScaleChange}
+          fitTrigger={fitTrigger}
         />
 
         {openedImage && (showChannelsPanel || pickedPixel) && (
@@ -111,6 +145,11 @@ export default function App() {
         width={openedImage?.width ?? 0}
         height={openedImage?.height ?? 0}
         colorDepth={openedImage?.colorDepth ?? 0}
+        displayScale={layoutScale}
+        onScaleChange={handleScaleChange}
+        visualAlgorithmId={visualAlgorithmId}
+        onAlgorithmChange={setVisualAlgorithmId}
+        onAutoFit={() => setFitTrigger((v) => v + 1)}
       />
 
       {isLevelsOpen && (
@@ -120,6 +159,15 @@ export default function App() {
           originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
           onClose={() => setIsLevelsOpen(false)}
           onApply={handleApplyLevels}
+        />
+      )}
+
+      {isResizeOpen && (
+        <ResizeDialog
+          isOpen={isResizeOpen}
+          originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
+          onClose={() => setIsResizeOpen(false)}
+          onApply={handleApplyResize}
         />
       )}
     </div>

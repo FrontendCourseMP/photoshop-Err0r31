@@ -59,7 +59,7 @@
 
   &__handleGamma {
     background: #777;
-    z-index: 3; // Put gamma handle above others if they overlap
+    z-index: 3;
   }
 
   &__inputs {

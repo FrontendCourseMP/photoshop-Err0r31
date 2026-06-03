@@ -68,12 +68,14 @@ export default function ChannelsPanel({
               />
 
               {thumbSrc && (
-                <img
-                  className={styles.channelsPanel__thumb}
-                  src={thumbSrc}
-                  alt={getChannelLabel(channel)}
-                  draggable={false}
-                />
+                <div className={styles.channelsPanel__thumbWrapper}>
+                  <img
+                    className={styles.channelsPanel__thumb}
+                    src={thumbSrc}
+                    alt={getChannelLabel(channel)}
+                    draggable={false}
+                  />
+                </div>
               )}
 
               <span className={styles.channelsPanel__label}>

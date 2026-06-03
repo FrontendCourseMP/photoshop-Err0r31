@@ -52,11 +52,23 @@
         transition: background-color $transition-fast;
     }
 
-    &__thumb {
+    &__thumbWrapper {
         width: 40px;
-        height: auto;
+        height: 40px;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
         border-radius: 2px;
         border: 1px solid $color-border;
+        overflow: hidden;
+    }
+
+    &__thumb {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
         image-rendering: auto;
         pointer-events: none;
     }

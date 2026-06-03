@@ -1,0 +1,312 @@
+@use "../../scss/variables" as *;
+
+.resizeDialog {
+  background: $color-bg-secondary;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  padding: 0;
+  width: 440px;
+  max-width: 90vw;
+  border: 1px solid $color-border;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-2 $space-3;
+    border-bottom: 1px solid $color-border;
+    background: $color-surface-2;
+    border-top-left-radius: $radius-md;
+    border-top-right-radius: $radius-md;
+
+    h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: $color-text-primary;
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: $color-text-secondary;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__body {
+    padding: $space-4;
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: $space-3 $space-4;
+    border-top: 1px solid $color-border;
+    background: $color-surface-1;
+    border-bottom-left-radius: $radius-md;
+    border-bottom-right-radius: $radius-md;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-2;
+  }
+
+  &__button {
+    background: $color-bg-tertiary;
+    color: $color-text-primary;
+    border: 1px solid $color-border;
+    padding: $space-2 $space-4;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-3;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__buttonPrimary {
+    background: $color-accent;
+    color: #fff;
+    border-color: $color-accent;
+
+    &:hover:not(:disabled) {
+      background: $color-accent-hover;
+      border-color: $color-accent-hover;
+    }
+  }
+}
+
+.infoBox {
+  background: $color-surface-1;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span {
+      color: $color-text-secondary;
+    }
+
+    strong {
+      color: $color-text-primary;
+    }
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 12px;
+    color: $color-text-secondary;
+    font-weight: 500;
+  }
+}
+
+.formGroupInline {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  label {
+    font-size: 12px;
+    color: $color-text-secondary;
+    width: 60px;
+  }
+
+  input {
+    flex: 1;
+  }
+}
+
+.select {
+  background: $color-bg-tertiary;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  padding: $space-2;
+  border-radius: $radius-sm;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: $color-surface-2;
+  }
+
+  &:focus {
+    border-color: $color-accent;
+  }
+}
+
+.dimensionsRow {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  border: 1px solid transparent;
+}
+
+.inputsColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.unitSuffix {
+  font-size: 12px;
+  color: $color-text-muted;
+  width: 20px;
+}
+
+.input {
+  background: $color-bg-tertiary;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  padding: $space-2;
+  border-radius: $radius-sm;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus {
+    border-color: $color-accent;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  appearance: textfield;
+}
+
+.lockColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 90px;
+}
+
+.lockButton {
+  background: $color-bg-tertiary;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  border-radius: $radius-sm;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    color: $color-text-primary;
+    background: $color-surface-2;
+    border-color: $color-text-muted;
+  }
+
+  &Active {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: $color-accent;
+    color: $color-accent;
+
+    &:hover:not(:disabled) {
+      background: rgba(59, 130, 246, 0.25);
+      border-color: $color-accent;
+      color: $color-accent;
+    }
+  }
+}
+
+.lockText {
+  font-size: 9px;
+  color: $color-text-muted;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 11px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: $radius-sm;
+  padding: $space-2;
+  line-height: 1.4;
+}
+
+.tooltipCard {
+  background: $color-surface-1;
+  border: 1px solid $color-border;
+  border-left: 3px solid $color-accent;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: $color-accent;
+  }
+
+  &__desc {
+    font-size: 11px;
+    color: $color-text-secondary;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__advantages {
+    font-size: 11px;
+    color: $color-text-primary;
+    line-height: 1.4;
+
+    strong {
+      color: $color-accent;
+    }
+  }
+}

@@ -14,13 +14,123 @@
 
     font-size: 12px;
     color: $color-text-secondary;
+    user-select: none;
 
     &__item {
         padding-right: $space-3;
         border-right: 1px solid $color-border;
 
+        display: flex;
+        align-items: center;
+        gap: $space-2;
+
         &:last-child {
             border-right: none;
+        }
+    }
+
+    &__select {
+        background: $color-bg-tertiary;
+        border: 1px solid $color-border;
+        color: $color-text-primary;
+        font-size: 11px;
+        padding: 1px 4px;
+        border-radius: $radius-sm;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.15s ease, background 0.15s ease;
+
+        &:hover {
+            border-color: $color-accent;
+            background: $color-bg-primary;
+        }
+
+        &:focus {
+            border-color: $color-accent;
+        }
+    }
+
+    &__input {
+        width: 32px;
+        background: $color-bg-tertiary;
+        border: 1px solid $color-border;
+        color: $color-text-primary;
+        font-size: 11px;
+        padding: 1px 2px;
+        border-radius: $radius-sm;
+        text-align: center;
+        outline: none;
+        transition: border-color 0.15s ease;
+
+        &:focus {
+            border-color: $color-accent;
+        }
+    }
+
+    &__button {
+        background: $color-bg-tertiary;
+        border: 1px solid $color-border;
+        color: $color-text-primary;
+        font-size: 11px;
+        padding: 1px 6px;
+        border-radius: $radius-sm;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.15s ease, background 0.15s ease;
+
+        &:hover {
+            border-color: $color-accent;
+            background: $color-bg-primary;
+        }
+
+        &:focus {
+            border-color: $color-accent;
+        }
+    }
+
+    &__slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 150px;
+        height: 4px;
+        border-radius: 2px;
+        background: $color-border;
+        outline: none;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        &:hover {
+            background: $color-text-muted;
+        }
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: $color-accent;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        &::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: $color-accent-hover;
+        }
+
+        &::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border: none;
+            border-radius: 50%;
+            background: $color-accent;
+            transition: transform 0.15s ease, background 0.15s ease;
+            cursor: pointer;
+        }
+
+        &::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            background: $color-accent-hover;
         }
     }
 }
