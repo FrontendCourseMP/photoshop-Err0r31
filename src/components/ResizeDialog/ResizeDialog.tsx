@@ -93,12 +93,16 @@ export default function ResizeDialog({
     setWidthInput(val);
 
     if (lockRatio) {
+      if (val === "") {
+        setHeightInput("");
+        return;
+      }
       const parsedVal = parseFloat(val);
-      if (!isNaN(parsedVal) && parsedVal > 0) {
+      if (!isNaN(parsedVal)) {
         if (unit === "percent") {
           setHeightInput(val);
         } else {
-          const calculatedH = Math.max(Math.round(parsedVal / aspect), 1);
+          const calculatedH = parsedVal === 0 ? 0 : Math.max(Math.round(parsedVal / aspect), 1);
           setHeightInput(calculatedH.toString());
         }
       }
@@ -110,12 +114,16 @@ export default function ResizeDialog({
     setHeightInput(val);
 
     if (lockRatio) {
+      if (val === "") {
+        setWidthInput("");
+        return;
+      }
       const parsedVal = parseFloat(val);
-      if (!isNaN(parsedVal) && parsedVal > 0) {
+      if (!isNaN(parsedVal)) {
         if (unit === "percent") {
           setWidthInput(val);
         } else {
-          const calculatedW = Math.max(Math.round(parsedVal * aspect), 1);
+          const calculatedW = parsedVal === 0 ? 0 : Math.max(Math.round(parsedVal * aspect), 1);
           setWidthInput(calculatedW.toString());
         }
       }
@@ -175,7 +183,7 @@ export default function ResizeDialog({
     await new Promise((resolve) => setTimeout(resolve, 30));
 
     try {
-      const resizedData = selectedAlgo.scale(
+      const resizedData = await selectedAlgo.scale(
         originalImageData,
         targetWidth,
         targetHeight,

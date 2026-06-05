@@ -109,12 +109,22 @@ export default function CanvasArea({
       INTERPOLATION_ALGORITHMS[visualAlgorithmId] ||
       INTERPOLATION_ALGORITHMS.bilinear;
 
-    let finalImageData = srcImageData;
-    if (zoomedWidth !== width || zoomedHeight !== height) {
-      finalImageData = algo.scale(srcImageData, zoomedWidth, zoomedHeight);
-    }
+    let isCancelled = false;
 
-    context.putImageData(finalImageData, 0, 0);
+    (async () => {
+      let finalImageData = srcImageData;
+      if (zoomedWidth !== width || zoomedHeight !== height) {
+        finalImageData = await algo.scale(srcImageData, zoomedWidth, zoomedHeight);
+      }
+      if (isCancelled) {
+        return;
+      }
+      context.putImageData(finalImageData, 0, 0);
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [bitmap, width, height, enabledChannels, channelMode, visualScale, visualAlgorithmId, previewImageData]);
 
   function handleCanvasClick(event: React.MouseEvent<HTMLCanvasElement>) {

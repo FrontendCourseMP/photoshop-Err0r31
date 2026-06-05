@@ -1,12 +1,14 @@
+import { yieldToBrowserFrame } from "../scheduler";
+
 export interface InterpolationAlgorithm {
   id: string;
   name: string;
   description: string;
   advantages: string;
-  scale(source: ImageData, targetWidth: number, targetHeight: number): ImageData;
+  scale(source: ImageData, targetWidth: number, targetHeight: number): Promise<ImageData>;
 }
 
-export function nearestNeighborScale(
+export function nearestNeighborScaleSync(
   source: ImageData,
   targetWidth: number,
   targetHeight: number
@@ -39,11 +41,48 @@ export function nearestNeighborScale(
   return target;
 }
 
-export function bilinearScale(
+export async function nearestNeighborScale(
   source: ImageData,
   targetWidth: number,
   targetHeight: number
-): ImageData {
+): Promise<ImageData> {
+  const srcWidth = source.width;
+  const srcHeight = source.height;
+  const srcData = source.data;
+  const target = new ImageData(targetWidth, targetHeight);
+  const targetData = target.data;
+
+  const src32 = new Uint32Array(srcData.buffer);
+  const target32 = new Uint32Array(targetData.buffer);
+
+  const scaleX = srcWidth / targetWidth;
+  const scaleY = srcHeight / targetHeight;
+
+  for (let y = 0; y < targetHeight; y++) {
+    if (y > 0 && y % 100 === 0) {
+      await yieldToBrowserFrame();
+    }
+
+    const srcYReal = (y + 0.5) * scaleY;
+    const srcY = Math.min(Math.max(Math.floor(srcYReal), 0), srcHeight - 1);
+    const srcYOffset = srcY * srcWidth;
+    const targetYOffset = y * targetWidth;
+
+    for (let x = 0; x < targetWidth; x++) {
+      const srcXReal = (x + 0.5) * scaleX;
+      const srcX = Math.min(Math.max(Math.floor(srcXReal), 0), srcWidth - 1);
+      target32[targetYOffset + x] = src32[srcYOffset + srcX];
+    }
+  }
+
+  return target;
+}
+
+export async function bilinearScale(
+  source: ImageData,
+  targetWidth: number,
+  targetHeight: number
+): Promise<ImageData> {
   const srcWidth = source.width;
   const srcHeight = source.height;
   const srcData = source.data;
@@ -54,6 +93,10 @@ export function bilinearScale(
   const scaleY = srcHeight / targetHeight;
 
   for (let y = 0; y < targetHeight; y++) {
+    if (y > 0 && y % 50 === 0) {
+      await yieldToBrowserFrame();
+    }
+
     const srcYReal = (y + 0.5) * scaleY - 0.5;
     const y0 = Math.floor(srcYReal);
     const y1 = y0 + 1;

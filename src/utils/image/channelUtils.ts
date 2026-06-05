@@ -1,6 +1,6 @@
 import type { ChannelMode, ImageColorDepth } from "../../types/image";
 import { imageDataRegistry } from "./imageRegistry";
-import { nearestNeighborScale } from "./interpolation";
+import { nearestNeighborScaleSync } from "./interpolation";
 
 export function colorDepthToChannelMode(depth: ImageColorDepth): ChannelMode {
   switch (depth) {
@@ -180,7 +180,7 @@ export function generateChannelThumbnails(
   let smallData: ImageData;
 
   if (originalImageData) {
-    smallData = nearestNeighborScale(originalImageData, thumbW, thumbH);
+    smallData = nearestNeighborScaleSync(originalImageData, thumbW, thumbH);
   } else {
     thumbCtx.drawImage(bitmap, 0, 0, thumbW, thumbH);
     smallData = thumbCtx.getImageData(0, 0, thumbW, thumbH);
