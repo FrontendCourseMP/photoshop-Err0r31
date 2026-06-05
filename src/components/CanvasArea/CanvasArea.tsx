@@ -41,19 +41,39 @@ export default function CanvasArea({
   const viewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (bitmap) {
-      const viewport = viewportRef.current;
-      if (viewport) {
-        const rect = viewport.getBoundingClientRect();
-        const maxW = Math.max(rect.width - 100, 50);
-        const maxH = Math.max(rect.height - 100, 50);
-
-        let fitScale = Math.min(maxW / width, maxH / height);
-        fitScale = Math.min(Math.max(fitScale, 0.12), 3.0);
-
-        onScaleChange(Math.round(fitScale * 100) / 100, true);
-      }
+    if (!bitmap) {
+      return;
     }
+
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      return;
+    }
+
+    let isInitial = true;
+
+    const handleResize = () => {
+      const rect = viewport.getBoundingClientRect();
+      const maxW = Math.max(rect.width - 100, 50);
+      const maxH = Math.max(rect.height - 100, 50);
+
+      let fitScale = Math.min(maxW / width, maxH / height);
+      fitScale = Math.min(Math.max(fitScale, 0.12), 3.0);
+
+      onScaleChange(Math.round(fitScale * 100) / 100, isInitial);
+      isInitial = false;
+    };
+
+    handleResize();
+
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    resizeObserver.observe(viewport);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, [bitmap, width, height, fitTrigger, onScaleChange]);
 
   useEffect(() => {

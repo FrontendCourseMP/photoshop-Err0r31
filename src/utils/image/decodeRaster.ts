@@ -2,8 +2,18 @@ import type { ImageColorDepth, OpenedImage } from "../../types/image";
 import { colorDepthToChannelMode } from "./channelUtils";
 import { imageDataRegistry } from "./imageRegistry";
 
-function detectColorDepthFromMimeType(fileType: string): ImageColorDepth {
-  return fileType === "image/jpeg" ? 24 : 32;
+function detectColorDepth(file: File): ImageColorDepth {
+  const fileType = file.type.toLowerCase();
+  if (fileType === "image/jpeg" || fileType === "image/jpg") {
+    return 24;
+  }
+
+  const fileName = file.name.toLowerCase();
+  if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+    return 24;
+  }
+
+  return 32;
 }
 
 export async function decodeRasterBrowserFile(file: File): Promise<OpenedImage> {
@@ -21,7 +31,7 @@ export async function decodeRasterBrowserFile(file: File): Promise<OpenedImage> 
 
   imageDataRegistry.set(bitmap, imageData);
 
-  const colorDepth = detectColorDepthFromMimeType(file.type);
+  const colorDepth = detectColorDepth(file);
 
   return {
     fileName: file.name,
