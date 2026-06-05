@@ -10,6 +10,7 @@ type FilterDialogProps = {
   originalImageData: ImageData | null;
   onClose: () => void;
   onApply: (newData: ImageData) => void;
+  onPreview?: (previewData: ImageData | null) => void;
 };
 
 export default function FilterDialog({
@@ -18,6 +19,7 @@ export default function FilterDialog({
   originalImageData,
   onClose,
   onApply,
+  onPreview,
 }: FilterDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -255,6 +257,42 @@ export default function FilterDialog({
       ctx.putImageData(target, 0, 0);
     }
   }, [thumbnailData, kernelStrings, edgeStrategy, selectedChannels, showPreview, channelMode]);
+
+  useEffect(() => {
+    if (!isOpen || !originalImageData || !onPreview || !channelMode) return;
+
+    if (!showPreview) {
+      onPreview(null);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const previewData = await applyConvolution3x3(
+          originalImageData,
+          kernel,
+          edgeStrategy,
+          selectedChannels,
+          channelMode
+        );
+        onPreview(previewData);
+      } catch (err) {
+        console.error("Failed to apply preview filter", err);
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [kernelStrings, edgeStrategy, selectedChannels, showPreview, isOpen, originalImageData, onPreview, channelMode]);
+
+  useEffect(() => {
+    return () => {
+      if (onPreview) {
+        onPreview(null);
+      }
+    };
+  }, [onPreview]);
 
   const handlePresetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;

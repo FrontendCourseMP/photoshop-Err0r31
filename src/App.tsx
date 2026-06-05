@@ -38,6 +38,7 @@ export default function App() {
   const [layoutScale, setLayoutScale] = useState<number>(1);
   const [visualAlgorithmId, setVisualAlgorithmId] = useState<string>("bilinear");
   const [fitTrigger, setFitTrigger] = useState(0);
+  const [previewImageData, setPreviewImageData] = useState<ImageData | null>(null);
 
   if (openedImage !== prevImage) {
     setPrevImage(openedImage);
@@ -50,6 +51,7 @@ export default function App() {
       setEnabledChannels(new Set());
     }
     setPickedPixel(null);
+    setPreviewImageData(null);
   }
 
   useEffect(() => {
@@ -130,6 +132,7 @@ export default function App() {
           visualAlgorithmId={visualAlgorithmId}
           onScaleChange={handleScaleChange}
           fitTrigger={fitTrigger}
+          previewImageData={previewImageData}
         />
 
         {openedImage && (showChannelsPanel || pickedPixel) && (
@@ -166,6 +169,7 @@ export default function App() {
           originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
           onClose={() => setIsLevelsOpen(false)}
           onApply={handleApplyLevels}
+          onPreview={setPreviewImageData}
         />
       )}
 
@@ -185,6 +189,7 @@ export default function App() {
           originalImageData={openedImage?.bitmap ? imageDataRegistry.get(openedImage.bitmap) ?? null : null}
           onClose={() => setIsFilterOpen(false)}
           onApply={handleApplyFilter}
+          onPreview={setPreviewImageData}
         />
       )}
     </div>

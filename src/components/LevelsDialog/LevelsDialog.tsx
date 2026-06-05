@@ -16,6 +16,7 @@ type LevelsDialogProps = {
   originalImageData: ImageData | null;
   onClose: () => void;
   onApply: (newData: ImageData) => void;
+  onPreview?: (previewData: ImageData | null) => void;
 };
 
 const CHANNEL_OPTIONS: { value: HistogramChannel; label: string }[] = [
@@ -32,10 +33,11 @@ export default function LevelsDialog({
   originalImageData,
   onClose,
   onApply,
+  onPreview,
 }: LevelsDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   const [activeChannel, setActiveChannel] = useState<HistogramChannel>("master");
   const [configs, setConfigs] = useState(INITIAL_CONFIGS);
   const [logScale, setLogScale] = useState(false);
@@ -50,16 +52,10 @@ export default function LevelsDialog({
     }
   }, [channelMode, activeChannel]);
 
-  const histograms = useMemo(() => {
+  const currentHistogram = useMemo(() => {
     if (!originalImageData) return null;
-    return {
-      master: computeHistogram(originalImageData, "master"),
-      red: computeHistogram(originalImageData, "red"),
-      green: computeHistogram(originalImageData, "green"),
-      blue: computeHistogram(originalImageData, "blue"),
-      alpha: computeHistogram(originalImageData, "alpha"),
-    };
-  }, [originalImageData]);
+    return computeHistogram(originalImageData, activeChannel);
+  }, [originalImageData, activeChannel]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -136,6 +132,32 @@ export default function LevelsDialog({
     return () => cancelAnimationFrame(rAF);
   }, [configs, preview, isOpen, thumbnailData]);
 
+  useEffect(() => {
+    if (!isOpen || !originalImageData || !onPreview) return;
+
+    if (!preview) {
+      onPreview(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const newData = applyLevelsLUT(originalImageData, configs);
+      onPreview(newData);
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [configs, preview, isOpen, originalImageData, onPreview]);
+
+  useEffect(() => {
+    return () => {
+      if (onPreview) {
+        onPreview(null);
+      }
+    };
+  }, [onPreview]);
+
   if (!isOpen) return null;
 
   const handleSliderChange = (black: number, white: number, gamma: number) => {
@@ -161,7 +183,6 @@ export default function LevelsDialog({
   };
 
   const currentConfig = configs[activeChannel];
-  const currentHistogram = histograms ? histograms[activeChannel] : null;
 
   let histogramColor = "#fff";
   if (activeChannel === "red") histogramColor = "#f85149";
@@ -252,7 +273,7 @@ export default function LevelsDialog({
           />
           Предпросмотр
         </label>
-        
+
         <div className={styles.levelsDialog__actions}>
           <button className={styles.levelsDialog__button} onClick={handleReset}>
             Сброс

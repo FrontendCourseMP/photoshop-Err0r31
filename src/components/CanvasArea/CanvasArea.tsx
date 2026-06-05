@@ -21,6 +21,7 @@ type CanvasAreaProps = {
   visualAlgorithmId: string;
   onScaleChange: (scale: number, immediate?: boolean) => void;
   fitTrigger: number;
+  previewImageData?: ImageData | null;
 };
 
 export default function CanvasArea({
@@ -36,6 +37,7 @@ export default function CanvasArea({
   visualAlgorithmId,
   onScaleChange,
   fitTrigger,
+  previewImageData,
 }: CanvasAreaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -82,15 +84,15 @@ export default function CanvasArea({
       return;
     }
 
-    const originalImageData = imageDataRegistry.get(bitmap);
-    if (!originalImageData) {
+    const baseImageData = previewImageData || imageDataRegistry.get(bitmap);
+    if (!baseImageData) {
       return;
     }
 
     const allEnabled = areAllChannelsEnabled(enabledChannels, channelMode);
     const srcImageData = allEnabled
-      ? originalImageData
-      : renderWithChannels(originalImageData, enabledChannels, channelMode);
+      ? baseImageData
+      : renderWithChannels(baseImageData, enabledChannels, channelMode);
 
     const zoomedWidth = Math.max(Math.round(width * visualScale), 1);
     const zoomedHeight = Math.max(Math.round(height * visualScale), 1);
@@ -113,7 +115,7 @@ export default function CanvasArea({
     }
 
     context.putImageData(finalImageData, 0, 0);
-  }, [bitmap, width, height, enabledChannels, channelMode, visualScale, visualAlgorithmId]);
+  }, [bitmap, width, height, enabledChannels, channelMode, visualScale, visualAlgorithmId, previewImageData]);
 
   function handleCanvasClick(event: React.MouseEvent<HTMLCanvasElement>) {
     if (activeTool !== "eyedropper") {
