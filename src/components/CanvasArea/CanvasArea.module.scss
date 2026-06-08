@@ -19,7 +19,6 @@
         background: $color-bg-secondary;
 
         border: 1px solid $color-border;
-        border-radius: $radius-md;
 
         box-shadow: $shadow-sm;
 
@@ -46,7 +45,6 @@
         image-rendering: pixelated;
         background-color: $color-bg-tertiary;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
         transition: box-shadow 0.2s ease;
     }
 
